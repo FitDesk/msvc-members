@@ -1,6 +1,8 @@
 spring:
   application:
     name: msvc-members
+server:
+  port: ${MSVC_MEMBERS_PORT:9092}
 
 
 springdoc:
@@ -31,3 +33,4 @@ management:
     metrics:
       export:
         enabled: true
+
