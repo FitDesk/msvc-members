@@ -8,5 +8,5 @@ VOLUME /tmp
 RUN apk add --no-cache curl
 COPY --from=build /workspace/target/*.jar app.jar
 EXPOSE 9092
-
+ENV SPRING_PROFILES_ACTIVE=prod
 CMD ["java", "-jar", "app.jar"]
