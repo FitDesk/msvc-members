@@ -1,0 +1,17 @@
+package com.members.services.Impl;
+
+import com.members.mapper.MemberMapper;
+import com.members.repository.MemberRepository;
+import com.members.services.MemberService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class MemberServiceImpl implements MemberService {
+    private final MemberRepository memberRepository;
+    private final MemberMapper memberMapper;
+    
+}
