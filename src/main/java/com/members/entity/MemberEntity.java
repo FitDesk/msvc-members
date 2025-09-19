@@ -1,12 +1,14 @@
 package com.members.entity;
 
 import com.members.config.Audit;
+import com.members.config.AuditListener;
 import com.members.enums.MemberStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.context.event.EventListener;
 
 import java.util.UUID;
 
