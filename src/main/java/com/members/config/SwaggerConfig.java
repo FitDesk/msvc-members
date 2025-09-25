@@ -8,9 +8,9 @@ import io.swagger.v3.oas.annotations.servers.Server;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "",
-                description = "",
-                termsOfService = "",
+                title = "Microservicio de Miembros",
+                description = "Microservicio para el manejo de miembros",
+                termsOfService = "FitDesk",
                 version = "1.0.0",
                 contact = @Contact(
                         name = "",
@@ -26,11 +26,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
         servers = {
                 @Server(
                         description = "Local Server",
-                        url = "http://localhost:9092"
-                ),
-                @Server(
-                        description = "Production Server",
-                        url = "https://"
+                        url = "http://localhost:9098"
                 )
         }
 )

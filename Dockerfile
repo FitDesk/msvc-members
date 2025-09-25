@@ -7,6 +7,6 @@ FROM eclipse-temurin:21-jre-alpine
 VOLUME /tmp
 RUN apk add --no-cache curl
 COPY --from=build /workspace/target/*.jar app.jar
-EXPOSE 9092
+EXPOSE 9098
 ENV SPRING_PROFILES_ACTIVE=prod
 CMD ["java", "-jar", "app.jar"]
