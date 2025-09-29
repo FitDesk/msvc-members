@@ -25,6 +25,8 @@ public class MemberEntity {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
+    private String dni;
+    private String phone;
     private String email;
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
