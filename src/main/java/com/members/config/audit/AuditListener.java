@@ -1,4 +1,4 @@
-package com.members.config;
+package com.members.config.audit;
 
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
