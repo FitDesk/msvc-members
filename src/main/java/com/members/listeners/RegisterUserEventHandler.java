@@ -1,6 +1,7 @@
 package com.members.listeners;
 
 import com.members.entity.MemberEntity;
+import com.members.enums.MemberStatus;
 import com.members.events.CreatedUserEvent;
 import com.members.events.NotificationEvent;
 import com.members.repository.MemberRepository;
@@ -29,10 +30,11 @@ public class RegisterUserEventHandler {
                 .lastName(userEvent.lastName())
                 .dni(userEvent.dni())
                 .phone(userEvent.phone())
+                .status(MemberStatus.ACTIVE)
                 .build();
 
         memberRepository.save(member);
-
+        log.info("Usuario guardado {}", member);
     }
 
 }

@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "members", indexes = {@Index(columnList = "user_id"), @Index(columnList = "email")})
+//@Table(name = "members", indexes = {@Index(columnList = "user_id"), @Index(columnList = "email")})
+@Table(name = "members", indexes = {@Index(columnList = "user_id")})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class MemberEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id")
     private UUID userId;
     @Column(name = "first_name")
@@ -27,11 +27,11 @@ public class MemberEntity {
     private String lastName;
     private String dni;
     private String phone;
-    private String email;
+//    private String email;
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
-    @Column(name = "membership_id")
-    private UUID membershipId;
+//    @Column(name = "membership_id")
+//    private UUID membershipId;
     @Embedded
     private Audit audit;
 

@@ -1,10 +1,15 @@
 package com.members.controllers;
 
+import com.members.dto.MemberPageResponseDto;
+import com.members.dto.MemberRequestDto;
+import com.members.dto.MembersResponseDto;
 import com.members.services.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -13,6 +18,7 @@ import java.util.UUID;
 @RequestMapping("/member")
 @AllArgsConstructor
 @Tag(name = "Miembros", description = "API para destionar los miembros del gimnacio")
+
 public class MemberController {
     private final MemberService memberService;
 
@@ -20,23 +26,27 @@ public class MemberController {
             summary = "Listado de miembros",
             description = "Trae todo los miembros de la base de datos")
     @GetMapping
-    public ResponseEntity<?> listMember() {
-        return ResponseEntity.ok("listado de members");
+    public ResponseEntity<MemberPageResponseDto> listMember(
+            @RequestParam(required = false) String dni,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "firstName") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDirection
+
+    ) {
+        return ResponseEntity.ok(memberService.findAllMembers(dni, page, size, sortField, sortDirection));
     }
 
+    @PreAuthorize("@authorizationServiceImpl.canAccessResource(#id,authentication)")
     @GetMapping("{id}")
-    public ResponseEntity<?> getMemberById(@PathVariable UUID id) {
-        return ResponseEntity.ok("by id");
+    public ResponseEntity<MembersResponseDto> getMemberById(@PathVariable UUID id) {
+        return ResponseEntity.ok(memberService.findMemberById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<?> create() {
-        return ResponseEntity.ok("create");
-    }
-
+    @PreAuthorize("@authorizationServiceImpl.canAccessResource(#id,authentication)")
     @PatchMapping("{id}")
-    public ResponseEntity<?> update(@PathVariable UUID id) {
-        return ResponseEntity.ok("update");
+    public ResponseEntity<MembersResponseDto> update(@PathVariable UUID id, @Valid @RequestBody MemberRequestDto dto) {
+        return ResponseEntity.ok(memberService.updateInformationMember(id, dto));
     }
 
     @DeleteMapping("{id}")
