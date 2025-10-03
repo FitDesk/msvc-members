@@ -49,10 +49,4 @@ public class MemberController {
         return ResponseEntity.ok(memberService.updateInformationMember(id, dto));
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        return ResponseEntity.noContent().build();
-    }
-
-
 }

@@ -1,7 +1,6 @@
 package com.members.entity;
 
 import com.members.config.audit.Audit;
-import com.members.enums.MemberStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,10 +26,7 @@ public class MemberEntity {
     private String lastName;
     private String dni;
     private String phone;
-//    private String email;
-    @Enumerated(EnumType.STRING)
-    private MemberStatus status;
-//    @Column(name = "membership_id")
+    //    @Column(name = "membership_id")
 //    private UUID membershipId;
     @Embedded
     private Audit audit;

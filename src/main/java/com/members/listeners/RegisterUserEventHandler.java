@@ -1,9 +1,7 @@
 package com.members.listeners;
 
 import com.members.entity.MemberEntity;
-import com.members.enums.MemberStatus;
 import com.members.events.CreatedUserEvent;
-import com.members.events.NotificationEvent;
 import com.members.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +28,6 @@ public class RegisterUserEventHandler {
                 .lastName(userEvent.lastName())
                 .dni(userEvent.dni())
                 .phone(userEvent.phone())
-                .status(MemberStatus.ACTIVE)
                 .build();
 
         memberRepository.save(member);
