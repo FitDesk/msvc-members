@@ -6,7 +6,7 @@ public record MembersResponseDto(
         String lastName,
         String dni,
         String phone,
-//        String email,
+        String profileImageUrl,
         String status
 ) {
 }

@@ -19,19 +19,66 @@ public class RegisterUserEventHandler {
     private final MemberRepository memberRepository;
 
     @Transactional
-    @KafkaListener(topics = "user-created-event-topic")
+    @KafkaListener(
+            topics = "user-created-event-topic",
+            groupId = "members-service"
+    )
     public void handle(CreatedUserEvent userEvent) {
         log.info("Usuario nuevo recibido {}", userEvent);
-        MemberEntity member = MemberEntity.builder()
-                .userId(UUID.fromString(userEvent.userId()))
-                .firstName(userEvent.firstName())
-                .lastName(userEvent.lastName())
-                .dni(userEvent.dni())
-                .phone(userEvent.phone())
-                .build();
 
-        memberRepository.save(member);
-        log.info("Usuario guardado {}", member);
+        try {
+            UUID userId = UUID.fromString(userEvent.userId());
+            if (memberRepository.findById(userId).isPresent()) {
+                log.warn("Miembro con id {} ya existe , omitiendo creacion", userId);
+                return;
+            }
+            MemberEntity member = MemberEntity.builder()
+                    .userId(UUID.fromString(userEvent.userId()))
+                    .firstName(userEvent.firstName())
+                    .lastName(userEvent.lastName())
+                    .dni(userEvent.dni())
+                    .phone(userEvent.phone())
+                    .profileImageUrl(userEvent.profileImageUrl())
+                    .build();
+            memberRepository.save(member);
+            log.info("Usuario guardado {}", member);
+        } catch (
+                Exception e) {
+            log.error("Error al procesar evento de usuario creado {}", userEvent, e);
+        }
+
     }
+
+
+//    @KafkaListener(
+//            topics = "user-created-event-topic",
+//            groupId = "members-service"
+//    )
+//    public void handleUserUpdatedEvent(CreatedUserEvent event) {
+//        log.info("Evento recibido de usuario actualizado: {}", event);
+//
+//        try {
+//            UUID userId = UUID.fromString(event.userId());
+//
+//            memberRepository.findById(userId).ifPresent(member -> {
+//                if (event.firstName() != null) {
+//                    member.setFirstName(event.firstName());
+//                }
+//                if (event.lastName() != null) {
+//                    member.setLastName(event.lastName());
+//                }
+//                if (event.profileImageUrl() != null) {
+//                    member.setProfileImageUrl(event.profileImageUrl());
+//                }
+//
+//                memberRepository.save(member);
+//                log.info("Miembro actualizado exitosamente: {}", member.getUserId());
+//            });
+//
+//        } catch (
+//                Exception e) {
+//            log.error("Error al procesar evento de usuario actualizado: {}", event, e);
+//        }
+//    }
 
 }
