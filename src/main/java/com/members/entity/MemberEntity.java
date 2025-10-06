@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-//@Table(name = "members", indexes = {@Index(columnList = "user_id"), @Index(columnList = "email")})
 @Table(name = "members", indexes = {@Index(columnList = "user_id")})
 @Data
 @NoArgsConstructor
@@ -28,6 +27,8 @@ public class MemberEntity {
     private String phone;
     //    @Column(name = "membership_id")
 //    private UUID membershipId;
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
     @Embedded
     private Audit audit;
 
