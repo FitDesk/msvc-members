@@ -7,6 +7,8 @@ on:
 jobs:
   build-and-analyze:
     runs-on: ubuntu-latest
+    env:
+      SONAR_PR_BRANCH: ${{github.head_ref}}
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
 
@@ -32,4 +34,3 @@ jobs:
             -Dsonar.pullrequest.key=$SONAR_PULL_REQUEST_KEY \
             -Dsonar.pullrequest.branch=$SONAR_PR_BRANCH \
             -Dsonar.pullrequest.base=$SONAR_PULL_REQUEST_BASE
-            
