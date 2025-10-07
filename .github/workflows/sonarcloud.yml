@@ -32,3 +32,4 @@ jobs:
             -Dsonar.pullrequest.key=$SONAR_PULL_REQUEST_KEY \
             -Dsonar.pullrequest.branch=$SONAR_PR_BRANCH \
             -Dsonar.pullrequest.base=$SONAR_PULL_REQUEST_BASE
+            
