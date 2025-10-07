@@ -1,37 +1,34 @@
 package com.members.entity;
 
-import com.members.config.Audit;
-import com.members.config.AuditListener;
-import com.members.enums.MemberStatus;
+import com.members.config.audit.Audit;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.context.event.EventListener;
 
 import java.util.UUID;
 
 @Entity
-@Table(name = "members", indexes = {@Index(columnList = "user_id"), @Index(columnList = "email")})
+@Table(name = "members", indexes = {@Index(columnList = "user_id")})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class MemberEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id")
     private UUID userId;
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
-    private String email;
-    @Enumerated(EnumType.STRING)
-    private MemberStatus status;
-    @Column(name = "membership_id")
-    private UUID membershipId;
+    private String dni;
+    private String phone;
+    //    @Column(name = "membership_id")
+//    private UUID membershipId;
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
     @Embedded
     private Audit audit;
 

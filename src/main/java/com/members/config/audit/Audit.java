@@ -1,11 +1,10 @@
-package com.members.config;
+package com.members.config.audit;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Embeddable
 @Data
