@@ -22,6 +22,7 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.util.backoff.FixedBackOff;
+
 @Configuration
 @Slf4j
 public class KafkaConsumerConfig {
@@ -38,7 +39,7 @@ public class KafkaConsumerConfig {
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         config.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
         config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-        config.put(JsonDeserializer.TYPE_MAPPINGS, "NotificationEvent:com.members.events.NotificationEvent,CreatedUserEvent:com.members.events.CreatedUserEvent");
+        config.put(JsonDeserializer.TYPE_MAPPINGS, "NotificationEvent:com.members.events.NotificationEvent,CreatedUserEvent:com.members.events.CreatedUserEvent,PaymentApprovedEvent:com.members.events.PaymentApprovedEvent");
         config.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         return new DefaultKafkaConsumerFactory<>(config);
     }

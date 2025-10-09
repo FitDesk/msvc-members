@@ -25,8 +25,6 @@ public class MemberEntity {
     private String lastName;
     private String dni;
     private String phone;
-    //    @Column(name = "membership_id")
-//    private UUID membershipId;
     @Column(name = "profile_image_url")
     private String profileImageUrl;
     @Embedded
