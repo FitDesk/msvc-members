@@ -49,4 +49,9 @@ public class MemberController {
         return ResponseEntity.ok(memberService.updateInformationMember(id, dto));
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<MembersResponseDto> getMemberByUserId(@PathVariable UUID userId) {
+        return ResponseEntity.ok(memberService.findMemberById(userId));
+    }
+
 }
