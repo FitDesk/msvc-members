@@ -1,7 +1,7 @@
 package com.members.mapper;
 
 import com.members.config.MapStructConfig;
-import com.members.dto.MembershipResponseDto;
+import com.members.dto.membership.MembershipResponseDto;
 import com.members.entity.MembershipEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,4 +1,6 @@
-package com.members.dto;
+package com.members.dto.member;
+
+import com.members.dto.membership.MembershipDto;
 
 public record MemberWithMembershipDto(
         String userId,

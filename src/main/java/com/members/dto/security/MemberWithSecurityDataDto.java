@@ -1,4 +1,6 @@
-package com.members.dto;
+package com.members.dto.security;
+
+import com.members.dto.membership.MembershipDto;
 
 public record MemberWithSecurityDataDto(
         String userId,

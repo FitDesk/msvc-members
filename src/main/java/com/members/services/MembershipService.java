@@ -1,6 +1,6 @@
 package com.members.services;
 
-import com.members.dto.MembershipResponseDto;
+import com.members.dto.membership.MembershipResponseDto;
 import com.members.events.PaymentApprovedEvent;
 
 import java.util.UUID;

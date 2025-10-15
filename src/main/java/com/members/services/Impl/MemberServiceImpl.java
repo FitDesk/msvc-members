@@ -1,7 +1,10 @@
 package com.members.services.Impl;
 
 import com.members.clients.SecurityServiceClient;
-import com.members.dto.*;
+import com.members.dto.image.ImageUploadResponseDto;
+import com.members.dto.member.*;
+import com.members.dto.membership.MembershipDto;
+import com.members.dto.security.MemberWithSecurityDataDto;
 import com.members.dto.security.UserDTO;
 import com.members.dto.security.UserSecurityDto;
 import com.members.entity.MemberEntity;
@@ -11,6 +14,7 @@ import com.members.exceptions.MemberNotFoundException;
 import com.members.mapper.MemberMapper;
 import com.members.repository.MemberRepository;
 import com.members.repository.MembershipRepository;
+import com.members.services.CloudinaryService;
 import com.members.services.MemberService;
 import com.members.specifications.MemberSpecification;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,6 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,6 +41,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberMapper memberMapper;
     private final MembershipRepository membershipRepository;
     private final SecurityServiceClient securityServiceClient;
+    private final CloudinaryService cloudinaryService;
 
     @Override
     @Transactional(readOnly = true)
@@ -138,28 +144,53 @@ public class MemberServiceImpl implements MemberService {
     @Transactional(readOnly = true)
     @Override
     public MembersResponseDto findMemberById(UUID id) {
-        return memberRepository.findById(id).map(memberMapper::toDto).orElseThrow(EntityNotFoundException::new);
+        log.info("Buscando miembro por ID: {}", id);
+        MemberEntity member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException(id));
+        return memberMapper.toDto(member);
     }
 
+
     @Override
-    public MembersResponseDto updateInformationMember(UUID id, MemberRequestDto dto) {
+    @Transactional
+    public MembersResponseDto updateInformationMember(UUID id, MemberRequestDto dto, MultipartFile profileImage) {
+        log.info("Actualizando miembro: {}", id);
 
-        MemberEntity member = memberRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        MemberEntity member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException(id));
 
-        if (dto.firstName() != null) {
+        if (dto.firstName() != null && !dto.firstName().isBlank()) {
             member.setFirstName(dto.firstName());
+            log.debug("Actualizado firstName: {}", dto.firstName());
         }
-        if (dto.lastName() != null) {
+        if (dto.lastName() != null && !dto.lastName().isBlank()) {
             member.setLastName(dto.lastName());
+            log.debug("Actualizado lastName: {}", dto.lastName());
         }
-        if (dto.dni() != null) {
+        if (dto.dni() != null && !dto.dni().isBlank()) {
             member.setDni(dto.dni());
+            log.debug("Actualizado DNI: {}", dto.dni());
         }
-        if (dto.phone() != null) {
+        if (dto.phone() != null && !dto.phone().isBlank()) {
             member.setPhone(dto.phone());
+            log.debug("Actualizado phone: {}", dto.phone());
         }
-        memberRepository.save(member);
-        return memberMapper.toDto(member);
+
+        if (profileImage != null && !profileImage.isEmpty()) {
+            String oldPublicId = cloudinaryService.extractPublicIdFromUrl(member.getProfileImageUrl());
+            ImageUploadResponseDto uploadResponse = cloudinaryService.updateProfileImage(
+                    profileImage,
+                    id,
+                    oldPublicId
+            );
+            member.setProfileImageUrl(uploadResponse.getUrl());
+            log.info("Imagen de perfil actualizada en carpeta members");
+        }
+
+        MemberEntity savedMember = memberRepository.save(member);
+        log.info("Miembro actualizado exitosamente");
+
+        return memberMapper.toDto(savedMember);
     }
 
     @Override
@@ -199,5 +230,53 @@ public class MemberServiceImpl implements MemberService {
         }
 
         return memberMapper.toDtoWithSecurityAndMembership(member, securityDto, membershipDto);
+    }
+
+    @Override
+    @Transactional
+    public ImageUploadResponseDto updateProfileImage(UUID userId, MultipartFile file) {
+        log.info("🔄 Actualizando solo imagen de perfil para miembro: {}", userId);
+
+        MemberEntity member = memberRepository.findById(userId)
+                .orElseThrow(() -> new MemberNotFoundException(userId));
+
+        String oldPublicId = cloudinaryService.extractPublicIdFromUrl(member.getProfileImageUrl());
+        ImageUploadResponseDto uploadResponse = cloudinaryService.updateProfileImage(file, userId, oldPublicId);
+
+        member.setProfileImageUrl(uploadResponse.getUrl());
+        memberRepository.save(member);
+
+        log.info("✅ Imagen de miembro guardada en: fitdesk/members/profiles/");
+        return uploadResponse;
+    }
+
+    @Override
+    @Transactional
+    public boolean deleteProfileImage(UUID userId) {
+        log.info("Eliminando imagen de perfil de miembro: {}", userId);
+
+        MemberEntity member = memberRepository.findById(userId)
+                .orElseThrow(() -> new MemberNotFoundException(userId));
+
+        String currentImageUrl = member.getProfileImageUrl();
+
+        if (currentImageUrl != null && (currentImageUrl.contains("googleusercontent.com") ||
+                currentImageUrl.contains("ggpht.com"))) {
+            log.warn("No se puede eliminar imagen de Google");
+            return false;
+        }
+
+        String publicId = cloudinaryService.extractPublicIdFromUrl(currentImageUrl);
+        boolean deleted = false;
+
+        if (publicId != null) {
+            deleted = cloudinaryService.deleteImage(publicId);
+        }
+
+        member.setProfileImageUrl(null);
+        memberRepository.save(member);
+
+        log.info("Referencia de imagen eliminada");
+        return deleted;
     }
 }

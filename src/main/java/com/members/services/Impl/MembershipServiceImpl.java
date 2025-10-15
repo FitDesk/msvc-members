@@ -1,6 +1,6 @@
 package com.members.services.Impl;
 
-import com.members.dto.MembershipResponseDto;
+import com.members.dto.membership.MembershipResponseDto;
 import com.members.entity.MembershipEntity;
 import com.members.enums.MembershipStatus;
 import com.members.events.PaymentApprovedEvent;
