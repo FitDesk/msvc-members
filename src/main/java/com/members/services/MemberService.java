@@ -1,9 +1,6 @@
 package com.members.services;
 
-import com.members.dto.MemberFilterDto;
-import com.members.dto.MemberPageResponseDto;
-import com.members.dto.MemberRequestDto;
-import com.members.dto.MembersResponseDto;
+import com.members.dto.*;
 
 import java.util.UUID;
 
@@ -19,4 +16,6 @@ public interface MemberService {
     MembersResponseDto findMemberById(UUID id);
 
     MembersResponseDto updateInformationMember(UUID id, MemberRequestDto dto);
+
+    MemberWithSecurityDataDto findByMemberSecurity(UUID id);
 }

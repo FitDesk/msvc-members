@@ -1,10 +1,7 @@
 package com.members.controllers;
 
 import com.members.annotations.AdminAccess;
-import com.members.dto.MemberFilterDto;
-import com.members.dto.MemberPageResponseDto;
-import com.members.dto.MemberRequestDto;
-import com.members.dto.MembersResponseDto;
+import com.members.dto.*;
 import com.members.enums.MembershipStatus;
 import com.members.services.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -76,6 +73,12 @@ public class MemberController {
         return ResponseEntity.ok(
                 memberService.findAllMembers(filters, page, size, sortField, sortDirection)
         );
+    }
+
+    @AdminAccess
+    @GetMapping("/user-security/{id}")
+    public ResponseEntity<MemberWithSecurityDataDto> getMemberSecurity(@PathVariable UUID id) {
+        return ResponseEntity.ok(memberService.findByMemberSecurity(id));
     }
 
     @PreAuthorize("@authorizationServiceImpl.canAccessResource(#id,authentication)")

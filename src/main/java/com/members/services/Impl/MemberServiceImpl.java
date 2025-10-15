@@ -1,8 +1,13 @@
 package com.members.services.Impl;
 
+import com.members.clients.SecurityServiceClient;
 import com.members.dto.*;
+import com.members.dto.security.UserDTO;
+import com.members.dto.security.UserSecurityDto;
 import com.members.entity.MemberEntity;
 import com.members.entity.MembershipEntity;
+import com.members.enums.AuthProvider;
+import com.members.exceptions.MemberNotFoundException;
 import com.members.mapper.MemberMapper;
 import com.members.repository.MemberRepository;
 import com.members.repository.MembershipRepository;
@@ -30,7 +35,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final MemberMapper memberMapper;
     private final MembershipRepository membershipRepository;
-
+    private final SecurityServiceClient securityServiceClient;
 
     @Override
     @Transactional(readOnly = true)
@@ -54,15 +59,38 @@ public class MemberServiceImpl implements MemberService {
 
         List<MemberWithMembershipDto> members = memberPage.getContent().stream()
                 .map(member -> {
+
                     MembershipEntity activeMembership = membershipRepository
                             .findActiveMembershipByUserId(member.getUserId())
                             .orElse(null);
 
                     member.setActiveMembership(activeMembership);
-                    return memberMapper.toDtoWithMembership(member);
+
+                    String externalEmail = null;
+
+                    try {
+                        UserDTO userDTO = securityServiceClient.getUserById(member.getUserId());
+                        externalEmail = userDTO.getEmail();
+                    } catch (
+                            Exception ex) {
+                        log.error("Error al traer el email del usuario {} {}", member.getUserId(), ex.getMessage());
+                    }
+
+                    MemberWithMembershipDto dto = memberMapper.toDtoWithMembership(member);
+                    return new MemberWithMembershipDto(
+                            dto.userId(),
+                            dto.firstName(),
+                            dto.lastName(),
+                            dto.initials(),
+                            dto.dni(),
+                            dto.phone(),
+                            externalEmail != null ? externalEmail : dto.email(),
+                            dto.profileImageUrl(),
+                            dto.status(),
+                            dto.membership()
+                    );
                 })
                 .toList();
-
         log.info("Encontrados {} miembros de {} totales", members.size(), memberPage.getTotalElements());
 
         return new MemberPageResponseDto(
@@ -132,5 +160,44 @@ public class MemberServiceImpl implements MemberService {
         }
         memberRepository.save(member);
         return memberMapper.toDto(member);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MemberWithSecurityDataDto findByMemberSecurity(UUID id) {
+        log.info("Buscando informacion de member con id {}", id);
+
+        MemberEntity member = memberRepository.findById(id).orElseThrow(() -> new MemberNotFoundException(id));
+        UserSecurityDto securityDto = null;
+
+        try {
+            UserDTO userDto = securityServiceClient.getUserById(id);
+            securityDto = new UserSecurityDto(
+                    userDto.getEmail(), AuthProvider.valueOf(userDto.getProvider() != null ? userDto.getProvider() : "LOCAL")
+            );
+
+            log.info("Datos de security obtenediros {} para el usuario {}", userDto, id);
+        } catch (
+                Exception ex) {
+            log.error("Error al obtener datos de security para el usuario {} : {}", id, ex.getMessage());
+        }
+
+        MembershipDto membershipDto = null;
+
+        try {
+            MembershipEntity activeMembership = membershipRepository
+                    .findActiveMembershipByUserId(member.getUserId())
+                    .orElse(null);
+            if (activeMembership != null) {
+                member.setActiveMembership(activeMembership);
+                membershipDto = memberMapper.mapActiveMembership(member);
+                log.info("Membresia activa encontrada para el usuario {}", id);
+            }
+        } catch (
+                Exception ex) {
+            log.error("Error al obtener membresia activa para el usuario {} : {}", id, ex.getMessage());
+        }
+
+        return memberMapper.toDtoWithSecurityAndMembership(member, securityDto, membershipDto);
     }
 }

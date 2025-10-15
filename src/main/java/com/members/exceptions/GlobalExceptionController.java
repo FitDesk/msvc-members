@@ -121,5 +121,15 @@ public class GlobalExceptionController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
+    @ExceptionHandler(MemberNotFoundException.class)
+    public ResponseEntity<ErrorResponse> memberNoFoundException(MemberNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "RESOURCE_NOT_FOUND",
+                "El recurso solicitado no existe",
+                Collections.singletonList("Message " + ex.getMessage())
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
 
 }

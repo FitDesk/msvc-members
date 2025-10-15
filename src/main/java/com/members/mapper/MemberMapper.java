@@ -2,8 +2,10 @@ package com.members.mapper;
 
 import com.members.config.MapStructConfig;
 import com.members.dto.MemberWithMembershipDto;
+import com.members.dto.MemberWithSecurityDataDto;
 import com.members.dto.MembersResponseDto;
 import com.members.dto.MembershipDto;
+import com.members.dto.security.UserSecurityDto;
 import com.members.entity.MemberEntity;
 import com.members.entity.MembershipEntity;
 import com.members.enums.MembershipStatus;
@@ -20,8 +22,14 @@ public interface MemberMapper {
 
     MembersResponseDto toDto(MemberEntity entity);
 
+    @Mapping(target = "email", ignore = true)
+    @Mapping(target = "provider", ignore = true)
+    @Mapping(target = "membership", ignore = true)
+    MemberWithSecurityDataDto toDtoWithSecurity(MemberEntity entity);
+
     @Mapping(target = "membership", source = "entity", qualifiedByName = "mapActiveMembership")
     @Mapping(target = "initials", source = "entity", qualifiedByName = "mapInitials")
+//    @Mapping(target = "email", ignore = true)
     MemberWithMembershipDto toDtoWithMembership(MemberEntity entity);
 
     @Named("mapInitials")
@@ -63,5 +71,24 @@ public interface MemberMapper {
             return 0;
         }
         return (int) ChronoUnit.DAYS.between(now, membership.getEndDate());
+    }
+
+    default MemberWithSecurityDataDto toDtoWithSecurityAndMembership(
+            MemberEntity entity,
+            UserSecurityDto securityDto,
+            MembershipDto membershipDto
+    ) {
+        return new MemberWithSecurityDataDto(
+                entity.getUserId().toString(),
+                entity.getFirstName(),
+                entity.getLastName(),
+                entity.getDni(),
+                entity.getPhone(),
+                entity.getProfileImageUrl(),
+                "ACTIVE",
+                securityDto != null ? securityDto.email() : null,
+                securityDto != null ? securityDto.provider().name() : null,
+                membershipDto
+        );
     }
 }
