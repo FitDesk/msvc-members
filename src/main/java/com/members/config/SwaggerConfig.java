@@ -13,9 +13,8 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 termsOfService = "FitDesk",
                 version = "1.0.0",
                 contact = @Contact(
-                        name = "",
-                        url = "",
-                        email = ""
+                        name = "FitDesk",
+                        email = "fitdesk@gmail.com"
                 ),
                 license = @License(
                         name = "Standard Apache License Version 2.0 for Fintech",

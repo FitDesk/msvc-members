@@ -1,10 +1,14 @@
 package com.members.controllers;
 
+import com.members.annotations.AdminAccess;
+import com.members.dto.MemberFilterDto;
 import com.members.dto.MemberPageResponseDto;
 import com.members.dto.MemberRequestDto;
 import com.members.dto.MembersResponseDto;
+import com.members.enums.MembershipStatus;
 import com.members.services.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -23,22 +27,59 @@ public class MemberController {
     private final MemberService memberService;
 
     @Operation(
-            summary = "Listado de miembros",
-            description = "Trae todo los miembros de la base de datos")
+            summary = "Listado de miembros con información de membresía",
+            description = "Obtiene todos los miembros con información de su plan/membresía activa, " +
+                    "con soporte para búsqueda y filtrado avanzado"
+    )
     @GetMapping
-    public ResponseEntity<MemberPageResponseDto> listMember(
-            @RequestParam(required = false) String dni,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "firstName") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDirection
+    @AdminAccess
+    public ResponseEntity<MemberPageResponseDto> listMembers(
+            @Parameter(description = "Búsqueda global en DNI, email, nombre y apellido")
+            @RequestParam(required = false) String search,
 
+            @Parameter(description = "Filtrar por DNI específico")
+            @RequestParam(required = false) String dni,
+
+            @Parameter(description = "Filtrar por email")
+            @RequestParam(required = false) String email,
+
+            @Parameter(description = "Filtrar por nombre (búsqueda parcial)")
+            @RequestParam(required = false) String firstName,
+
+            @Parameter(description = "Filtrar por apellido (búsqueda parcial)")
+            @RequestParam(required = false) String lastName,
+
+            @Parameter(description = "Filtrar por estado de membresía: ACTIVE, EXPIRED, CANCELLED, SUSPENDED, PENDING")
+            @RequestParam(required = false) MembershipStatus membershipStatus,
+
+            @Parameter(description = "Número de página (inicia en 0)")
+            @RequestParam(defaultValue = "0") int page,
+
+            @Parameter(description = "Tamaño de página")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Campo por el cual ordenar")
+            @RequestParam(defaultValue = "firstName") String sortField,
+
+            @Parameter(description = "Dirección de ordenamiento: asc o desc")
+            @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        return ResponseEntity.ok(memberService.findAllMembers(dni, page, size, sortField, sortDirection));
+        MemberFilterDto filters = new MemberFilterDto(
+                search,
+                dni,
+                email,
+                firstName,
+                lastName,
+                membershipStatus
+        );
+
+        return ResponseEntity.ok(
+                memberService.findAllMembers(filters, page, size, sortField, sortDirection)
+        );
     }
 
     @PreAuthorize("@authorizationServiceImpl.canAccessResource(#id,authentication)")
-    @GetMapping("{id}")
+    @GetMapping("/user/{id}")
     public ResponseEntity<MembersResponseDto> getMemberById(@PathVariable UUID id) {
         return ResponseEntity.ok(memberService.findMemberById(id));
     }

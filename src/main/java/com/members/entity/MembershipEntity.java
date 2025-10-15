@@ -1,6 +1,7 @@
 package com.members.entity;
 
 import com.members.config.audit.Audit;
+import com.members.config.audit.AuditListener;
 import com.members.enums.MembershipStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditListener.class)
 public class MembershipEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

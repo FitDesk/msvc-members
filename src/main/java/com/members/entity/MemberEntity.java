@@ -1,6 +1,7 @@
 package com.members.entity;
 
 import com.members.config.audit.Audit;
+import com.members.config.audit.AuditListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditListener.class)
 public class MemberEntity {
     @Id
     @Column(name = "user_id")
@@ -30,4 +32,12 @@ public class MemberEntity {
     @Embedded
     private Audit audit;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "user_id",
+            referencedColumnName = "user_id",
+            insertable = false,
+            updatable = false
+    )
+    private MembershipEntity activeMembership;
 }

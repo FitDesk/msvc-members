@@ -27,20 +27,18 @@ public class MembershipServiceImpl implements MembershipService {
     @Override
     @Transactional
     public MembershipResponseDto createMembershipFromPayment(PaymentApprovedEvent event) {
-        log.info("🎯 Creando membresía para usuario: {} con plan: {}", event.userId(), event.planName());
+        log.info("Creando membresía para usuario: {} con plan: {}", event.userId(), event.planName());
 
-        // Cancelar membresías activas previas
         List<MembershipEntity> activeMemberships = membershipRepository.findByUserIdAndStatus(
                 event.userId(), MembershipStatus.ACTIVE);
 
         activeMemberships.forEach(membership -> {
             membership.setStatus(MembershipStatus.CANCELLED);
-            log.info("🔄 Cancelando membresía anterior: {}", membership.getId());
+            log.info("Cancelando membresía anterior: {}", membership.getId());
         });
 
         membershipRepository.saveAll(activeMemberships);
 
-        // Crear nueva membresía
         LocalDateTime startDate = LocalDateTime.now();
         LocalDateTime endDate = calculateEndDate(event.durationMonths(), startDate);
 
@@ -59,7 +57,7 @@ public class MembershipServiceImpl implements MembershipService {
                 .build();
 
         MembershipEntity savedMembership = membershipRepository.save(membership);
-        log.info("✅ Membresía creada exitosamente: {} para usuario: {}", savedMembership.getId(), event.userId());
+        log.info(" Membresía creada exitosamente: {} para usuario: {}", savedMembership.getId(), event.userId());
 
         return membershipMapper.entityToDto(savedMembership);
     }
@@ -68,7 +66,7 @@ public class MembershipServiceImpl implements MembershipService {
     @Override
     @Transactional(readOnly = true)
     public MembershipResponseDto getActiveMembership(UUID userId) {
-        log.info("🔍 Buscando membresía activa para usuario: {}", userId);
+        log.info("Buscando membresía activa para usuario: {}", userId);
 
         return membershipRepository.findActiveMembershipByUserId(userId)
                 .map(membershipMapper::entityToDto)
@@ -86,7 +84,7 @@ public class MembershipServiceImpl implements MembershipService {
     public void updateExpiredMemberships() {
         int updated = membershipRepository.updateExpiredMemberships(LocalDateTime.now());
         if (updated > 0) {
-            log.info("⏰ Actualizadas {} membresías expiradas", updated);
+            log.info("Actualizadas {} membresías expiradas", updated);
         }
     }
 
