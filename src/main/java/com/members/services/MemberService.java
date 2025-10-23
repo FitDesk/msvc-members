@@ -18,4 +18,7 @@ public interface MemberService {
     MembersResponseDto updateInformationMember(UUID id, MemberRequestDto dto);
 
     MemberWithSecurityDataDto findByMemberSecurity(UUID id);
+
+
+    MemberInfoDTO getMemberInfo(UUID userId);
 }
