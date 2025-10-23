@@ -1,6 +1,6 @@
 package com.members.controllers;
 
-import com.members.dto.MembersResponseDto;
+import com.members.dto.member.MembersResponseDto;
 import com.members.services.MemberService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;

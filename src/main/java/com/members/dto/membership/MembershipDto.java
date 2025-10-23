@@ -1,4 +1,4 @@
-package com.members.dto;
+package com.members.dto.membership;
 
 import com.members.enums.MembershipStatus;
 

@@ -1,4 +1,4 @@
-package com.members.dto;
+package com.members.dto.member;
 
 import java.util.List;
 

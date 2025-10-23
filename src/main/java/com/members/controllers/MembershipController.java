@@ -1,6 +1,6 @@
 package com.members.controllers;
 
-import com.members.dto.MembershipResponseDto;
+import com.members.dto.membership.MembershipResponseDto;
 import com.members.services.AuthorizationService;
 import com.members.services.MembershipService;
 import io.swagger.v3.oas.annotations.Operation;
