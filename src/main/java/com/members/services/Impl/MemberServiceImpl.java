@@ -278,5 +278,42 @@ public class MemberServiceImpl implements MemberService {
 
         log.info("Referencia de imagen eliminada");
         return deleted;
+
+    @Transactional(readOnly = true)
+    public MemberInfoDTO getMemberInfo(UUID userId) {
+        log.info("Obteniendo información completa del miembro {} para microservicio", userId);
+        
+        MemberEntity member = memberRepository.findById(userId)
+                .orElseThrow(() -> new MemberNotFoundException(userId));
+        String email = null;
+        try {
+            UserDTO userDTO = securityServiceClient.getUserById(member.getUserId());
+            email = userDTO.getEmail();
+            log.info("Email obtenido: {}", email);
+        } catch (Exception ex) {
+            log.warn("No se pudo obtener email del usuario {} desde msvc-security: {}",
+                    member.getUserId(), ex.getMessage());
+        }
+        MembershipDto membershipDto = null;
+        try {
+            MembershipEntity activeMembership = membershipRepository
+                    .findActiveMembershipByUserId(member.getUserId())
+                    .orElse(null);
+            if (activeMembership != null) {
+                member.setActiveMembership(activeMembership);
+                membershipDto = memberMapper.mapActiveMembership(member);
+                log.info("Membresía activa encontrada: {}", membershipDto.planName());
+            } else {
+                log.info("No hay membresía activa para el usuario {}", userId);
+            }
+        } catch (Exception ex) {
+            log.error("Error al obtener membresía activa para el usuario {} : {}", userId, ex.getMessage());
+        }
+        
+        MemberInfoDTO result = memberMapper.toMemberInfoDTO(member, email, membershipDto);
+        log.info("MemberInfoDTO construido para {}: {} {}", userId, result.getFirstName(), result.getLastName());
+        
+        return result;
+
     }
 }

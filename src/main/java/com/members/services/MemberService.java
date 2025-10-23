@@ -25,8 +25,11 @@ public interface MemberService {
 
     MemberWithSecurityDataDto findByMemberSecurity(UUID id);
 
-    //Solo la foto
+
     ImageUploadResponseDto updateProfileImage(UUID userId, MultipartFile file);
 
     boolean deleteProfileImage(UUID userId);
+
+    MemberInfoDTO getMemberInfo(UUID userId);
+
 }

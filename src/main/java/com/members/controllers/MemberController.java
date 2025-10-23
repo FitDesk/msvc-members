@@ -172,4 +172,16 @@ public class MemberController {
     public ResponseEntity<MembersResponseDto> getMemberByUserId(@PathVariable UUID userId) {
         return ResponseEntity.ok(memberService.findMemberById(userId));
     }
+
+
+    @Operation(
+            description = "Endpoint específico para comunicación entre microservicios. " +
+                    "Incluye email desde msvc-security y membership activa completa."
+    )
+    @GetMapping("/{userId}/info")
+    public ResponseEntity<MemberInfoDTO> getMemberInfo(@PathVariable UUID userId) {
+        return ResponseEntity.ok(memberService.getMemberInfo(userId));
+    }
+
 }
+

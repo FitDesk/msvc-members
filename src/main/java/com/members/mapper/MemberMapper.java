@@ -5,6 +5,13 @@ import com.members.dto.member.MemberWithMembershipDto;
 import com.members.dto.security.MemberWithSecurityDataDto;
 import com.members.dto.member.MembersResponseDto;
 import com.members.dto.membership.MembershipDto;
+
+import com.members.dto.MemberInfoDTO;
+import com.members.dto.MemberWithMembershipDto;
+import com.members.dto.MemberWithSecurityDataDto;
+import com.members.dto.MembersResponseDto;
+import com.members.dto.MembershipDto;
+
 import com.members.dto.security.UserSecurityDto;
 import com.members.entity.MemberEntity;
 import com.members.entity.MembershipEntity;
@@ -90,5 +97,26 @@ public interface MemberMapper {
                 securityDto != null ? securityDto.provider().name() : null,
                 membershipDto
         );
+    }
+
+
+    default MemberInfoDTO toMemberInfoDTO(
+            MemberEntity entity,
+            String email,
+            MembershipDto membershipDto
+    ) {
+        return MemberInfoDTO.builder()
+                .userId(entity.getUserId())
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
+                .email(email)
+                .dni(entity.getDni())
+                .phone(entity.getPhone())
+                .initials(MemberHelpers.generateInitials(entity.getFirstName(), entity.getLastName()))
+                .profileImageUrl(entity.getProfileImageUrl())
+                .status("ACTIVE")
+                .membership(membershipDto)
+                .lastAccess(null)
+                .build();
     }
 }
