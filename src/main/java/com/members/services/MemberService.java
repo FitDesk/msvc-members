@@ -1,5 +1,6 @@
 package com.members.services;
 
+import com.members.dto.MemberInfoDTO;
 import com.members.dto.image.ImageUploadResponseDto;
 import com.members.dto.member.MemberFilterDto;
 import com.members.dto.member.MemberPageResponseDto;
