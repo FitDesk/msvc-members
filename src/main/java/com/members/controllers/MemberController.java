@@ -1,6 +1,7 @@
 package com.members.controllers;
 
 import com.members.annotations.AdminAccess;
+import com.members.dto.MemberInfoDTO;
 import com.members.dto.image.ImageUploadResponseDto;
 import com.members.dto.member.MemberFilterDto;
 import com.members.dto.member.MemberPageResponseDto;
