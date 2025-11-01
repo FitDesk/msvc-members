@@ -30,7 +30,6 @@ public class MembershipController {
     @GetMapping("/my-active-membership")
     public ResponseEntity<MembershipResponseDto> getMyActiveMembership(Authentication authentication) {
         UUID userId = authorizationService.getUserId(authentication);
-        log.info("🔍 Usuario {} consultando su membresía activa", userId);
 
         MembershipResponseDto membership = membershipService.getActiveMembership(userId);
         if (membership == null) {

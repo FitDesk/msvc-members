@@ -11,11 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -135,7 +133,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             }
         } catch (
                 Exception e) {
-            log.warn("⚠️ No se pudo extraer publicId de: {}", imageUrl);
+            log.warn("No se pudo extraer publicId de: {}", imageUrl);
         }
 
         return null;

@@ -32,7 +32,6 @@ public interface MemberMapper {
 
     @Mapping(target = "membership", source = "entity", qualifiedByName = "mapActiveMembership")
     @Mapping(target = "initials", source = "entity", qualifiedByName = "mapInitials")
-//    @Mapping(target = "email", ignore = true)
     MemberWithMembershipDto toDtoWithMembership(MemberEntity entity);
 
     @Named("mapInitials")

@@ -18,7 +18,6 @@ import com.members.repository.MembershipRepository;
 import com.members.services.CloudinaryService;
 import com.members.services.MemberService;
 import com.members.specifications.MemberSpecification;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -236,7 +235,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public ImageUploadResponseDto updateProfileImage(UUID userId, MultipartFile file) {
-        log.info("🔄 Actualizando solo imagen de perfil para miembro: {}", userId);
 
         MemberEntity member = memberRepository.findById(userId)
                 .orElseThrow(() -> new MemberNotFoundException(userId));
@@ -247,7 +245,7 @@ public class MemberServiceImpl implements MemberService {
         member.setProfileImageUrl(uploadResponse.getUrl());
         memberRepository.save(member);
 
-        log.info("✅ Imagen de miembro guardada en: fitdesk/members/profiles/");
+        log.info(" Imagen de miembro guardada ");
         return uploadResponse;
     }
 

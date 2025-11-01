@@ -50,35 +50,4 @@ public class RegisterUserEventHandler {
     }
 
 
-//    @KafkaListener(
-//            topics = "user-created-event-topic",
-//            groupId = "members-service"
-//    )
-//    public void handleUserUpdatedEvent(CreatedUserEvent event) {
-//        log.info("Evento recibido de usuario actualizado: {}", event);
-//
-//        try {
-//            UUID userId = UUID.fromString(event.userId());
-//
-//            memberRepository.findById(userId).ifPresent(member -> {
-//                if (event.firstName() != null) {
-//                    member.setFirstName(event.firstName());
-//                }
-//                if (event.lastName() != null) {
-//                    member.setLastName(event.lastName());
-//                }
-//                if (event.profileImageUrl() != null) {
-//                    member.setProfileImageUrl(event.profileImageUrl());
-//                }
-//
-//                memberRepository.save(member);
-//                log.info("Miembro actualizado exitosamente: {}", member.getUserId());
-//            });
-//
-//        } catch (
-//                Exception e) {
-//            log.error("Error al procesar evento de usuario actualizado: {}", event, e);
-//        }
-//    }
-
 }
